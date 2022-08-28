@@ -2,7 +2,7 @@ import { AuthButtons } from './authButtons';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { FC } from 'react';
-import { PusherMember } from './chatBox';
+import { PusherMember } from './chat/chatBox';
 import { FaTools, FaCrown } from 'react-icons/fa';
 
 type User = {

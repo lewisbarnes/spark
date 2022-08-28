@@ -53,6 +53,8 @@ export const messageRouter = createRouter()
 				message: {content: req.input.content!, id: id.id},
 				sender: req.ctx.session?.user,
 			});
+
+			return id;
 		},
 	})
 	.mutation('delete', {

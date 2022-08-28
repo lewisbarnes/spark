@@ -14,7 +14,7 @@ export const LinkEmbed : FC<{url: string}> = ({url}) => {
 				<p className="text-xs">{ogData?.siteName}</p>
 				<Link href={!url.startsWith('http') ? `https://${url}` : url}>
 					<a target="_blank" className="text-blue-400 hover:cursor-pointer mr-4">
-						{url}
+						{ogData?.title}
 					</a>
 				</Link>
 				<div className="">{ogData?.desc?.substring(0, 100)}</div>

@@ -6,7 +6,7 @@ import { AuthButtons } from '../components/authButtons';
 import { NavBar } from '../components/navBar';
 import Image from 'next/image';
 import { UserDisplay } from '../components/userDisplay';
-import { ChatBox } from '../components/chatBox';
+import { ChatBox } from '../components/chat/chatBox';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ModalLayout } from '../components/modal/modalLayout';

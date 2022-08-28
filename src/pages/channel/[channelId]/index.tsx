@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { BaseLayout } from '../../../components/baseLayout';
-import { ChatBox } from '../../../components/chatBox';
+import { ChatBox } from '../../../components/chat/chatBox';
 import { trpc } from '../../../utils/trpc';
 import ErrorPage from 'next/error';
 import LinkButton from '../../../components/linkButton';
