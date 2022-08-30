@@ -1,30 +1,42 @@
-import Link from 'next/link';
-import { FC } from 'react';
-import { trpc } from '../../../utils/trpc';
+import { FC, useState } from 'react';
+import defaultCss from '../../../utils/defaultCss';
+import { ModalContainer } from '../modalContainer';
+import { ModalLayout } from '../modalLayout';
 
-export const LinkEmbed : FC<{url: string}> = ({url}) => {
-	const { data: ogData, isLoading: ogLoading } = trpc.useQuery(
-		['openGraph.scrape', { url: url }],
-		{}
-	);
-
+export const LinkEmbed: FC<{
+	url: string;
+	title: string;
+}> = ({ url, title }) => {
+	const [showModal, setShowModal] = useState(false);
+	const handleLinkClick = (e: React.MouseEvent) => {
+		if (e.currentTarget !== e.target) {
+			return;
+		}
+		setShowModal(!showModal);
+	};
 	return (
-		<div className="flex bg-zinc-700 p-2 gap-1 rounded-md max-w-[32rem] drop-shadow-md">
-			<div className="flex flex-col">
-				<p className="text-xs">{ogData?.siteName}</p>
-				<Link href={!url.startsWith('http') ? `https://${url}` : url}>
-					<a target="_blank" className="text-blue-400 hover:cursor-pointer mr-4">
-						{ogData?.title}
-					</a>
-				</Link>
-				<div className="">{ogData?.desc?.substring(0, 100)}</div>
-			</div>
-			<img
-				className="mb-auto"
-				src={ogData?.image?.at(0)!.url}
-				width="80"
-				referrerPolicy="no-referrer"
-			/>
-		</div>
+		<>
+			{showModal && (
+				<ModalLayout onClick={handleLinkClick}>
+					<ModalContainer>
+						<div className="flex flex-col gap-4 ">
+							<p className="text-4xl text-center text-purple-400">WOAH!</p>
+							<div className="text-center">
+								<p>This link takes you to </p>
+								<p className="text-blue-400">{url}</p>
+								<p>Are you sure you want to continue?</p>
+								<p>(It'll open in a new tab)</p>
+							</div>
+							<div className="self-center">
+								<a href={url}>Yes, I&apos;m sure!</a>
+							</div>
+						</div>
+					</ModalContainer>
+				</ModalLayout>
+			)}
+			<p className={defaultCss.link + ' break-all'} onClick={handleLinkClick}>
+				{title}
+			</p>
+		</>
 	);
 };

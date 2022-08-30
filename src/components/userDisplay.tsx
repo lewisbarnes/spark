@@ -2,7 +2,6 @@ import { AuthButtons } from './authButtons';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { FC } from 'react';
-import { PusherMember } from './chat/chatBox';
 import { FaTools, FaCrown } from 'react-icons/fa';
 
 type User = {
@@ -19,9 +18,9 @@ type Props = {
 
 export const UserDisplay: FC<Props> = ({ user, compact }) => {
 	return (
-			<div className="flex gap-2 pl-1 z-10">
+			<div className="flex gap-2 z-10">
 				{!compact && (
-					<div className="flex rounded-full w-[2rem] max-h-[2rem]">
+					<div className="flex rounded-full w-[2rem] h-[2rem]">
 						<Image
 							className="rounded-full max-h-[2rem]"
 							src={user.image!}

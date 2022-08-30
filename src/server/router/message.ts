@@ -1,13 +1,7 @@
-import { createRouter } from './context';
-import { z } from 'zod';
-import { resolve } from 'path';
-import { createNextApiHandler } from '@trpc/server/adapters/next';
-import { trpc } from '../../utils/trpc';
-import { Message } from '@prisma/client';
-import { EventEmitter } from 'events';
+import { z, ZodError } from 'zod';
 import { pusher } from '../../utils/pusher';
-import ogs from 'ts-open-graph-scraper';
-
+import { createRouter } from './context';
+import superjson from 'superjson';
 
 export const messageRouter = createRouter()
 	.query('getLast20', {
@@ -38,35 +32,33 @@ export const messageRouter = createRouter()
 			channelId: z.string(),
 		}),
 		async resolve(req) {
-			const id = await req.ctx.prisma.message.create({
-				data: {
-					content: req.input.content,
-					userId: req.ctx.session!.user!.id!,
-					channelId: req.input.channelId,
-					timestamp: BigInt(Date.now()),
-				},
-				select: { id: true, content: true },
-				
-			});
-
-			await pusher.trigger(req.input.channelId, "new-message", {
-				message: {content: req.input.content!, id: id.id},
-				sender: req.ctx.session?.user,
-			});
-
-			return id;
+				const message = await req.ctx.prisma.message.create({
+					data: {
+						content: req.input.content,
+						userId: req.ctx.session!.user!.id!,
+						channelId: req.input.channelId,
+						timestamp: BigInt(Date.now()),
+					},
+					include: {user: true}
+				});
+	
+				await pusher.trigger(req.input.channelId, 'new-message', {
+					message: superjson.stringify(message),
+					sender: req.ctx.session?.user?.id,
+				});
+				return message;
 		},
 	})
 	.mutation('delete', {
-		input : z.object({
+		input: z.object({
 			channelId: z.string(),
 			messageId: z.string(),
 		}),
-		async resolve({ctx, input}) {
-			await ctx.prisma.message.delete({where:{id: input.messageId}});
-			await pusher.trigger(input.channelId, "message-deleted", {
-				message: {content: '', id: input.messageId},
+		async resolve({ ctx, input }) {
+			await ctx.prisma.message.delete({ where: { id: input.messageId } });
+			await pusher.trigger(input.channelId, 'message-deleted', {
+				message: { content: '', id: input.messageId },
 				sender: ctx.session?.user,
 			});
-		}
-	})
+		},
+	});

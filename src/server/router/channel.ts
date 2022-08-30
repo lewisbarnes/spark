@@ -1,8 +1,5 @@
-import { createRouter } from './context';
 import { z } from 'zod';
-import { resolve } from 'path';
-import { createNextApiHandler } from '@trpc/server/adapters/next';
-import { trpc } from '../../utils/trpc';
+import { createRouter } from './context';
 
 export const channelRouter = createRouter()
 	.query('getAll', {
@@ -14,10 +11,10 @@ export const channelRouter = createRouter()
 		input: z.object({
 			channelId: z.string(),
 		}),
-		async resolve(req) {
-			return await req.ctx.prisma.messageChannel.findFirst({
+		async resolve({ input, ctx }) {
+			return await ctx.prisma.messageChannel.findFirst({
 				include: { Messages: true },
-				where: { id: req.input.channelId },
+				where: { id: input.channelId },
 			});
 		},
 	})
@@ -29,8 +26,8 @@ export const channelRouter = createRouter()
 			return await req.ctx.prisma.messageChannel.create({
 				data: {
 					name: req.input.name,
-					userId: req.ctx.session?.user?.id!,
-				}
+					userId: req.ctx.session?.user?.id ? req.ctx.session?.user?.id : '',
+				},
 			});
 		},
 	});

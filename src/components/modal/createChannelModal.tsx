@@ -1,11 +1,7 @@
-import { NextPage } from 'next';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, FC, MouseEventHandler, useState } from 'react';
-import { BaseLayout } from '../baseLayout';
 import { ModalContainer } from './modalContainer';
 import { ModalLayout } from './modalLayout';
-import { NavBar } from '../navBar';
 import { trpc } from '../../utils/trpc';
 import ActionButton from '../actionButton';
 
@@ -16,10 +12,10 @@ type Props = {
 const CreateChannelModal: FC<Props> = ({ callback }) => {
 	const router = useRouter();
 
-	let [channelName, setChannelName] = useState('');
-	let [channelDesc, setChannelDesc] = useState('');
+	const [channelName, setChannelName] = useState('');
+	const [channelDesc, setChannelDesc] = useState('');
 	const newChannel = trpc.useMutation(['channel.create'], {
-		onSettled(data, error, variables, context) {
+		onSettled(data) {
 			router.push(`/channel/${data?.id}`);
 		},
 	});

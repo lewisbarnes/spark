@@ -1,50 +1,54 @@
-import Link from 'next/link';
-import Image from 'next/image';
 import React, { FC } from 'react';
-import { emoteMap } from '../utils/emoteMap';
-import { trpc } from '../utils/trpc';
-import ogs from 'ts-open-graph-scraper';
 import { FaTrashAlt } from 'react-icons/fa';
+import { trpc } from '../utils/trpc';
 import { LinkEmbed } from './modal/embeds/linkEmbed';
-import MessageParser from '../utils/messageParser';
-import FormatMessage from '../utils/messageFormatter';
+import superjson from 'superjson';
+import { MessageElement, URLEmbedElement } from '../utils/messageParser';
 
 type Props = {
-	compact: boolean;
 	message: string;
 	messageId: string;
 	channelId: string;
 };
 
-const urlRE =
-	/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
-
-const ProcessedMessage: FC<Props> = ({ message, compact, messageId, channelId }) => {
+const ProcessedMessage: FC<Props> = ({ message, messageId, channelId }) => {
 	if (!message) {
 		return <></>;
 	}
 
-	
-	let splitMessage = message.split(' ');
-	let messageElements = new Array<React.ReactNode>();
-	let builtString = '';
+	function isURL(content: string | URLEmbedElement): content is URLEmbedElement {
+		return (content as URLEmbedElement).url !== undefined;
+	}
+
+	const renderMessage = (message: string) => {
+		const messageElements = superjson.parse<MessageElement[]>(message);
+		const JSXElements = [];
+		JSXElements.push(messageElements.map((elem,i) => {
+			if (elem.type === 'text' && typeof elem.content === 'string') {
+				return <p key={messageId + i} className="text-wrap">{elem.content as string}</p>
+			} else if (elem.type === 'url' && isURL(elem.content)) {
+					return <LinkEmbed key={messageId + i} url={elem.content.url} title={elem.content.title}/>
+			}}));
+		return JSXElements;
+	};
+
 	const deleteMutation = trpc.useMutation(['message.delete'], {
-		onSuccess(data) {
+		onSuccess() {
 			utils.invalidateQueries(['message.getByChannelId']);
 		},
 	});
 	const utils = trpc.useContext();
-	const handleDeleteClick = (event: React.MouseEvent) => {
-		deleteMutation.mutate({channelId: channelId, messageId: messageId});
+	
+	const handleDeleteClick = () => {
+		deleteMutation.mutate({ channelId: channelId, messageId: messageId });
 	};
-	const parsedMessage = MessageParser(message);
-	if(parsedMessage.elements.length == 0) {
-		return <></>;
-	}
+
 	return (
-		<div className="flex flex-grow mr-2  group" key={messageId}>
-			<div className="flex flex-col gap-1" key={messageId}>{FormatMessage(message)}</div>
-			<div className='flex-grow'></div>
+		<div className="flex flex-grow mr-2 group relative">
+			<div className="flex flex-col gap-1">
+				{renderMessage(message)}
+			</div>
+			<div className="flex-grow"></div>
 			<div className="hidden group-hover:block my-auto" onClick={handleDeleteClick}>
 				<FaTrashAlt />
 			</div>

@@ -5,14 +5,15 @@ import type { AppType } from 'next/dist/shared/lib/utils';
 import superjson from 'superjson';
 import { SessionProvider } from 'next-auth/react';
 import '../styles/globals.css';
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 
 const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => {
+	const [parent] = useAutoAnimate();
 	return (
-		<div className='dark:bg-zinc-900 dark:text-white'>
+		<div className='dark:bg-black dark:text-white flex flex-col min-h-screen font-inter'>
 			<SessionProvider session={session}>
 					<Component {...pageProps} />
 			</SessionProvider>
-			<p className='hidden'>https://media.discordapp.net/attachments/340531909475958786/1012106347359256606/unknown.png?width=648&height=485</p>
 		</div>
 	);
 };

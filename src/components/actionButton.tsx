@@ -1,4 +1,5 @@
 import { FC, MouseEventHandler } from "react";
+import defaultCss from "../utils/defaultCss";
 
 type Props = {
 	action: MouseEventHandler;
@@ -7,7 +8,7 @@ type Props = {
 
 const ActionButton : FC<Props> = ({action, caption}) => {
 	return (
-		<div className="bg-teal-600 px-2 my-auto rounded-full text-center hover:cursor-pointer hover:bg-teal-800" onClick={action}>
+		<div className={defaultCss.button} onClick={action}>
 			{caption}
 		</div>
 	)
