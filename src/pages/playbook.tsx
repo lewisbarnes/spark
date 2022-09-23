@@ -6,7 +6,7 @@ const Playbook: NextPage = () => {
 	return (
 		<div className="h-screen flex flex-col gap-2">
 			<div className="p-2 bg-zinc-800 drop-shadow-md">
-				<Link href="/"><div className="font-bold text-2xl text-purple-400 hover:cursor-pointer">Spark</div></Link>
+				<Link href="/"><div className="font-bold text-2xl text-purple-600 hover:cursor-pointer">Spark</div></Link>
 			</div>
 			<div className="self-start mx-auto text-4xl">Playbook</div>
 			<div className="self-start mx-auto text-2xl">Click elements to copy markup</div>

@@ -68,7 +68,8 @@ model VerificationToken {
 model MessageChannel {
   id        String    @id @default(cuid())
   name      String
-  userId    String
+  userId    String 		
+	description String	@default("")
   createdBy User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   Messages  Message[]
 }

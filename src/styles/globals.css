@@ -2,16 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-*::-webkit-scrollbar {
-	background-color: transparent;
-	width: 0.5rem;
-  }
-
-  *::-webkit-scrollbar-thumb {
-	background-color: rgb(39 39 42);
-	border-radius: 0.375rem;
-  }
-
 	@font-face {
 		font-family: Inter;
 		src: url(../../public/fonts/Inter.ttf);

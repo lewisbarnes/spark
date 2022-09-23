@@ -27,14 +27,14 @@ const Home: NextPage = () => {
 			</Head>
 			<BaseLayout>
 				<>
-					<div className="pt-32 pb-4 h-screen z-10 flex flex-col gap-4 bg-contain backdrop-brightness-200 backdrop-blur-md dark:backdrop-invert-0 bg-opacity-30 bg-black">
-						<div className="self-center font-bold text-6xl bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 text-transparent p-4">Spark</div>
+					<div className="pt-32 pb-4 h-screen z-10 flex flex-col gap-4">
+						<div className="self-center font-bold text-6xl bg-clip-text bg-gradient-to-r from-purple-600 to-blue-400 text-transparent p-4">Spark</div>
 						<div className="self-center mt-10 text-white">
 							{session && (
 								
 								<div className="flex flex-col gap-4">
 									<p className='text-center text-xl'>Signed in as</p>
-									<UserDisplay user={session.user!} compact={false}/>
+									<UserDisplay user={session.user!}/>
 									<ActionButton
 										action={() => router.push('/app')}
 										caption="Open Spark"

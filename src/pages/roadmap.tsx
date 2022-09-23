@@ -7,7 +7,7 @@ const Roadmap: NextPage = () => {
 		<BaseLayout>
 		<div className="h-screen flex flex-col gap-2 backdrop-blur-md select-none">
 			<div className="p-2 bg-zinc-800 drop-shadow-md">
-				<Link href="/"><div className="font-bold text-2xl text-purple-400 hover:cursor-pointer">Spark</div></Link>
+				<Link href="/"><div className="font-bold text-2xl text-purple-600 hover:cursor-pointer">Spark</div></Link>
 			</div>
 			<div className="p-4 container mx-auto select-all">
 				<p className="text-4xl mb-4">Road to MVP</p>

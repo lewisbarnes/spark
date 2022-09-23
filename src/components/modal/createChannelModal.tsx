@@ -14,7 +14,7 @@ const CreateChannelModal: FC<Props> = ({ callback }) => {
 
 	const [channelName, setChannelName] = useState('');
 	const [channelDesc, setChannelDesc] = useState('');
-	const newChannel = trpc.useMutation(['channel.create'], {
+	const newChannel = trpc.channel.create.useMutation({
 		onSettled(data) {
 			router.push(`/channel/${data?.id}`);
 		},

@@ -1,26 +1,54 @@
 // src/utils/trpc.ts
 import type { AppRouter } from "../server/router";
 import { createReactQueryHooks } from "@trpc/react";
-import type { inferProcedureOutput, inferProcedureInput } from "@trpc/server";
+import { inferProcedureOutput, inferProcedureInput, initTRPC } from "@trpc/server";
+import { Context } from "../server/router/context";
+import superjson from 'superjson';
+import { createTRPCNext } from "@trpc/next";
 
-export const trpc = createReactQueryHooks<AppRouter>();
+import { httpBatchLink, loggerLink } from '@trpc/client';
 
-/**
- * This is a helper method to infer the output of a query resolver
- * @example type HelloOutput = inferQueryOutput<'hello'>
- */
-export type inferQueryOutput<
-  TRouteKey extends keyof AppRouter["_def"]["queries"],
-> = inferProcedureOutput<AppRouter["_def"]["queries"][TRouteKey]>;
+function getBaseUrl() {
+  // browser should use relative url
+  if (typeof window !== 'undefined') return '';
 
-export type inferQueryInput<
-  TRouteKey extends keyof AppRouter["_def"]["queries"],
-> = inferProcedureInput<AppRouter["_def"]["queries"][TRouteKey]>;
+  // reference for vercel.com SSR
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
 
-export type inferMutationOutput<
-  TRouteKey extends keyof AppRouter["_def"]["mutations"],
-> = inferProcedureOutput<AppRouter["_def"]["mutations"][TRouteKey]>;
+  // reference for render.com SSR
+  if (process.env.RENDER_INTERNAL_HOSTNAME) {
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+  }
 
-export type inferMutationInput<
-  TRouteKey extends keyof AppRouter["_def"]["mutations"],
-> = inferProcedureInput<AppRouter["_def"]["mutations"][TRouteKey]>;
+  // override for docker etc SSR
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+
+  // assume localhost in dev SSR
+  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+}
+
+export const trpc = createTRPCNext<AppRouter>({
+	config() {
+		return {
+			transformer: superjson,
+			links: [
+        // adds pretty logs to your console in development and logs errors in production
+        loggerLink({
+          enabled: (opts) =>
+            process.env.NODE_ENV === 'development' ||
+            (opts.direction === 'down' && opts.result instanceof Error),
+        }),
+        httpBatchLink({
+          url: `${getBaseUrl()}/api/trpc`,
+        }),
+      ],
+		}
+	},
+	ssr: false,
+});
+
+export type ChannelOutput = inferProcedureOutput<AppRouter['channel']>;
+// export type MessageOutput = inferProcedureOutput<AppRouter>;
+// export type AccountOutput = inferProcedureOutput<AppRouter['account']>;

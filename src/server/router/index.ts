@@ -1,19 +1,23 @@
 // src/server/router/index.ts
-import { createRouter } from '../router/context';
-import superjson from 'superjson';
-
+import { t } from "./trpc";
 import { accountRouter } from './account';
-import { protectedExampleRouter } from './protected-example-router';
-import { messageRouter } from './message';
 import { channelRouter } from './channel';
-import { openGraphRouter } from './opengraph';
+import { messageRouter } from './message';
 
-export const appRouter = createRouter()
-	.transformer(superjson)
-	.merge('account.', accountRouter)
-	.merge('message.', messageRouter)
-	.merge('channel.', channelRouter)
-	.merge('openGraph.',openGraphRouter)
+
+// const legacyRouter = createRouter()
+// 	.transformer(superjson)
+// 	.merge('account.', accountRouter)
+// 	.merge('message.', messageRouter)
+// 	.merge('channel.', channelRouter)
+// 	.merge('openGraph.',openGraphRouter).interop()
+
+
+export const appRouter = t.router({
+	account: accountRouter,
+	message: messageRouter,
+	channel: channelRouter,
+})
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
