@@ -84,30 +84,26 @@ export const ChatBox: FC<{ channelId: string; compact: boolean }> = ({ channelId
 		<div
 			className="relative top-0 right-0 left-0 bottom-0 overflow-y-auto w-full"
 		>
-			<div className="absolute top-0 right-0 left-0 bottom-12">
-
-				<div className="flex flex-col-reverse h-full overflow-y-auto">
+			<div className="absolute top-0 right-0 left-0 bottom-10">
+				<div className="flex flex-col-reverse h-full overflow-y-auto pb-2">
 					{messages?.map((x) => <MessageComponent message={x} key={x.id}/>)}
 					<div className="text-center dark:text-zinc-600 select-none mb-10">
-					This is the start of{' '}
-					<span className="dark:text-zinc-500 font-bold">#{channel?.name}</span>
+					<p>This is the start of<span className="dark:text-zinc-500 font-bold"> #{channel?.name}</span></p>
 				</div>
 				</div>
 			</div>
 			{errorMessage.length > 0 && (
 				<div className="text-red-400 text-sm">{errorMessage}</div>
 			)}
-				<div className="flex absolute bottom-0 right-0 left-0">
-					<div className="relative bg-neutral-300 dark:bg-zinc-600 justify-center p-2 flex flex-col rounded-l-md">
+				<div className="flex absolute bottom-0 right-0 left-0 bg-neutral-300 dark:bg-zinc-600 p-2 gap-2 rounded-md">
 						<IconContext.Provider
-							value={{ size: '16px', className: 'fill-zinc-400 hover:fill-purple-600' }}
+							value={{ size: '16px', className: 'fill-zinc-400 hover:fill-purple-600 self-center' }}
 						>
 							<FaPlusCircle />
 						</IconContext.Provider>
-					</div>
 					<Slate editor={editor} value={value} onChange={(newValue) => setValue(newValue)}>
 						<Editable
-							className="bg-neutral-300 dark:bg-zinc-600 flex-grow my-auto overflow-y-auto rounded-r-md p-2"
+							className="bg-neutral-300 dark:bg-zinc-600 flex-grow my-auto overflow-y-auto"
 							placeholder={status == "authenticated" ? `message #${channel?.name}` : 'login to chat'}
 							readOnly = {status !== "authenticated"}
 							onKeyDown={handleKeyDown}

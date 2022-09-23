@@ -18,9 +18,13 @@ const AppHome: NextPage<{ channel: string }> = ({ channel }) => {
         <meta name="description" content="A chat app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-col h-screen max-h-screen w-full bg-zinc-800">
-        <Header currentPage='/app' />
-				<p className='mx-auto my-auto text-4xl text-zinc-600'>Welcome to Spark!</p>
+      <div className="flex flex-col h-screen max-h-screen w-full dark:bg-zinc-800">
+        <Header/>
+				<div className='flex flex-col h-full justify-center'>
+				<p className='mx-auto text-4xl text-zinc-600'>Welcome to Spark!</p>
+				<Link href="/app/chat"><p className='mx-auto text-2xl text-zinc-600'>Why not try <span className="hover:cursor-pointer text-purple-600 dark:text-purple-400">Chat</span>?</p></Link>
+				</div>
+
       </div>
     </>
   );

@@ -10,8 +10,8 @@ type User = {
 
 export const UserDisplay: FC<{ user: User }> = ({ user }) => {
   return (
-    <div className="flex gap-2 items-center">
-      <Image className="rounded-full" src={user.image!} width={32} height={32}></Image>
+    <div className="flex gap-2 items-center text-sm">
+      <Image className="rounded-full" src={user.image!} width="24" height="24"></Image>
       <p>{user.name!}</p>
     </div>
   );

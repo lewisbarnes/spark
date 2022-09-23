@@ -12,7 +12,7 @@ const CreateChannel: NextPage = () => {
 	const [channelDesc, setChannelDesc] = useState('');
 	const router = useRouter();
 
-	const newChannel = trpc.useMutation(['channel.create'], {
+	const newChannel = trpc.channel.create.useMutation({
 		onSettled(data) {
 			router.push(`/app?channel=${data!.id!}`);
 		},
@@ -33,7 +33,7 @@ const CreateChannel: NextPage = () => {
 	return (
 		<BaseLayout>
 			<>
-				<Header />
+				<Header/>
 				<div className="flex flex-col gap-2 p-8 rounded-md drop-shadow-2xl">
 					<p>Create Channel</p>
 					<div className="flex">

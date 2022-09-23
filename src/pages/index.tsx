@@ -28,18 +28,18 @@ const Home: NextPage = () => {
 			<BaseLayout>
 				<>
 					<div className="pt-32 pb-4 h-screen z-10 flex flex-col gap-4">
-						<div className="self-center font-bold text-6xl bg-clip-text bg-gradient-to-r from-purple-600 to-blue-400 text-transparent p-4">Spark</div>
+						<div className="self-center font-bold text-6xl text-zinc-800 bg-purple-400 p-4 rounded-full text-center">Spark</div>
 						<div className="self-center mt-10 text-white">
 							{session && (
 								
 								<div className="flex flex-col gap-4">
-									<p className='text-center text-xl'>Signed in as</p>
+									<p className='text-center text-lg'>Signed in as</p>
 									<UserDisplay user={session.user!}/>
 									<ActionButton
 										action={() => router.push('/app')}
 										caption="Open Spark"
 									/>
-									<ActionButton action={() => signOut()} caption="Sign Out" />
+									{/* <ActionButton action={() => signOut()} caption="Sign Out" /> */}
 								</div>
 							)}
 							{!session && <div className={defaultCss.button + ' flex gap-2 py-1'} onClick={() => signIn('discord')}><div className='my-auto'><FaDiscord/></div>Sign In</div>}

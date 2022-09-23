@@ -1,6 +1,7 @@
 import { NextPage, NextPageContext } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { FaBars } from 'react-icons/fa';
@@ -54,30 +55,35 @@ const ChatHome: NextPage<{ channel: string }> = ({ channel }) => {
         <meta name="description" content="A chat app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-col h-screen max-h-screen w-full bg-zinc-800">
-        <Header currentPage='/app/chat' />
-				<FaBars onClick={() => setChannelsHidden(!channelsHidden)} className="mt-3 ml-3 text-2xl hover:text-purple-600" />
-        <div className={`flex h-full gap-3 p-3`}>
-				{channelsHidden ? (
-              <></>
-            ) : (  
-          <div className="absolute z-50 flex flex-col bg-zinc-700 gap-3 p-3 rounded-md">
-                {channels?.map((channel) => (
+      <div className="flex flex-col h-screen max-h-screen w-full bg-neutral-200 dark:bg-zinc-800">
+        <Header />
+        <button
+          className="flex gap-3 hover:text-purple-400 items-center hover:cursor-pointer p-3"
+          onClick={() => setChannelsHidden(!channelsHidden)}
+        >
+          <FaBars className="inline" />
+          <span>Channels</span>
+        </button>
+
+        <div className={`flex h-full gap-3 px-3 pb-3`}>
+          {channelsHidden ? (
+            <></>
+          ) : (
+            <div className="flex flex-col gap-1 p-2 -ml-3 min-h-full border-r-[1px] border-neutral-500 dark:border-zinc-600">
+              {channels?.map((channel) => (
+                <Link key={channel.id} href={`/app/chat?c=${channel.id}`}>
                   <div
                     className={[
-                      'text-sm rounded-md p-2 hover:bg-neutral-300 dark:hover:bg-zinc-600 hover:text-purple-600 hover:cursor-pointer',
+                      'text-sm rounded-md p-2 hover:bg-neutral-300 dark:hover:bg-zinc-600 dark:hover:text-purple-400 hover:cursor-pointer',
                       channelId == channel.id ? ' bg-neutral-300 dark:bg-zinc-600' : '',
                     ].join(' ')}
-                    key={channel.id}
-                    onClick={() => {
-                      setChannelId(channel.id);
-                      router.push({ pathname: '/app/chat', query: { c: channel.id } });
-                    }}
                   >
                     <i>#{channel.name}</i>
                   </div>
-                ))}
-          </div>)}
+                </Link>
+              ))}
+            </div>
+          )}
           {channelId ? (
             <ChatBox channelId={channelId} compact={true} />
           ) : (

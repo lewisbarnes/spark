@@ -30,7 +30,6 @@ export const messageRouter = t.router({
 			},
 			include: { user: true },
 		});
-
 		await pusherServer.trigger(input.channelId, 'new-message', {
 			message: superjson.stringify(message),
 			sender: ctx.session?.user?.id,

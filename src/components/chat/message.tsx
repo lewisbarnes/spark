@@ -11,7 +11,6 @@ import { trpc } from '../../utils/trpc';
 import { LinkElement } from './embeds/linkElement';
 import superjson from 'superjson';
 import { MessageElement, URLEmbedElement } from '../../utils/messageParser';
-import { MessageUserDisplay } from '../messageUserDisplay';
 import { Message, User } from '@prisma/client';
 import defaultCss from '../../utils/defaultCss';
 
@@ -66,23 +65,25 @@ const MessageComponent: FC<Props> = ({ message }) => {
 
   return (
     <div
-      className="flex w-full gap-2 hover:dark:bg-zinc-700 py-1 px-3 group text-sm rounded-md rounded-tr-none"
+      className="flex w-full gap-2 hover:bg-neutral-300 hover:dark:bg-zinc-700 py-1 px-3 group text-sm rounded-md rounded-tr-none"
       onPointerEnter={() => handlePointer()}
       onPointerLeave={() => handlePointer()}
 			onTouchStart={() => setActionsHidden(!actionsHidden)}
     >
-      <div className="flex items-center h-max gap-1">
-        <div className="dark:text-zinc-400 text-right w-16">
-          {new Date(Number(message.timestamp)).toLocaleTimeString()}
-        </div>
-        <MessageUserDisplay user={message.user} />
-      </div>
+      <p className="flex gap-1 items-center">
+        <span className="dark:text-zinc-400 text-xs font-mono">
+          {new Date(Number(message.timestamp)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+				<span className="text-yellow-700 dark:text-yellow-400">
+					{message.user.name!}
+				</span>
+      </p>
       <div className="flex-1">{renderMessage(message)}</div>
       <div className="relative -mr-3">
         <div
           className={`${
             actionsHidden ? 'invisible' : 'visible'
-          } flex gap-2 absolute -top-8 right-0 p-2 bg-zinc-700 rounded-t-md text-md z-50`}
+          } flex gap-2 absolute -top-8 right-0 p-2 bg-neutral-300 dark:bg-zinc-700 rounded-t-md text-md z-50`}
         >
           {/* <div className="flex gap-1 flex-1">{message.content}</div> */}
           <div className="hover:text-purple-600">
