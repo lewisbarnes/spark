@@ -18,19 +18,18 @@ const MessageParser = (message: string) => {
   let runningWords = '';
   const reducedElements = [];
   for (const element of elements) {
-    if (element.type !== 'word') {
-			if (runningWords.length > 0) {
-        reducedElements.push({ type: 'text', content: runningWords});
+    if (element.type == 'word' || element.type == 'whitespace') {
+      runningWords += element.content;
+    } else {
+      if (runningWords.length > 0) {
+        reducedElements.push({ type: 'text', content: runningWords });
         runningWords = '';
       }
       reducedElements.push(element);
-
-    } else {
-      runningWords += element.content;
     }
   }
   if (runningWords.length > 0) {
-    reducedElements.push({ type: 'text', content: runningWords});
+    reducedElements.push({ type: 'text', content: runningWords });
     runningWords = '';
   }
   return reducedElements;
@@ -52,7 +51,11 @@ const ParseMessage = (message: string, elements: MessageElement[]) => {
     const char = message.charAt(i);
     if (!char.includes(' ') && !char.includes('\n')) {
       runningTokens += char;
-      if (message.charAt(i + 1) === ' ' || message.charAt(i + 1) === '\n'  || i + 1 === message.length) {
+      if (
+        message.charAt(i + 1) === ' ' ||
+        message.charAt(i + 1) === '\n' ||
+        i + 1 === message.length
+      ) {
         if (isUrl(runningTokens)) {
           elements.push({
             type: 'url',
@@ -62,13 +65,28 @@ const ParseMessage = (message: string, elements: MessageElement[]) => {
         }
       }
     } else {
-			runningTokens += char;
-      elements.push({ type: 'word', content: runningTokens });
+      if (isUrl(runningTokens)) {
+        elements.push({
+          type: 'url',
+          content: runningTokens,
+        });
+        elements.push({ type: 'word', content: char });
+      } else {
+        runningTokens += char;
+        elements.push({ type: 'word', content: runningTokens });
+      }
       runningTokens = '';
     }
   }
   if (runningTokens !== '') {
-    elements.push({ type: 'word', content: runningTokens });
+    if (isUrl(runningTokens)) {
+      elements.push({
+        type: 'url',
+        content: runningTokens,
+      });
+    } else {
+      elements.push({ type: 'word', content: runningTokens });
+    }
   }
   return elements;
 };

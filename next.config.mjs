@@ -1,4 +1,4 @@
-import { env } from "./src/env/server.mjs";
+import { env } from './src/env/server.mjs';
 
 /**
  * Don't be scared of the generics here.
@@ -15,7 +15,14 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
-	images: {
-		domains: ['cdn.discordapp.com','static-cdn.jtvnw.net','cdn.betterttv.net','postimg.cc','pbs.twimg.com']
-	}
+  images: {
+    domains: [
+      'cdn.discordapp.com',
+      'static-cdn.jtvnw.net',
+      'cdn.betterttv.net',
+      'postimg.cc',
+      'pbs.twimg.com',
+      'avatars.githubusercontent.com',
+    ],
+  },
 });

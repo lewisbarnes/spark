@@ -11,6 +11,7 @@ import { UserDisplay } from '../../components/userDisplay';
 import { trpc } from '../../utils/trpc';
 
 const AppHome: NextPage<{ channel: string }> = ({ channel }) => {
+  const { data: session } = useSession();
   return (
     <>
       <Head>
@@ -18,13 +19,22 @@ const AppHome: NextPage<{ channel: string }> = ({ channel }) => {
         <meta name="description" content="A chat app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-col h-screen max-h-screen w-full dark:bg-zinc-800">
-        <Header/>
-				<div className='flex flex-col h-full justify-center'>
-				<p className='mx-auto text-4xl text-zinc-600'>Welcome to Spark!</p>
-				<Link href="/app/chat"><p className='mx-auto text-2xl text-zinc-600'>Why not try <span className="hover:cursor-pointer text-purple-600 dark:text-purple-400">Chat</span>?</p></Link>
-				</div>
 
+      <div className="flex flex-col h-screen max-h-screen w-full bg-white dark:bg-zinc-800 px-3">
+        <Header />
+        <div className="flex flex-col h-full justify-center gap-2">
+          <p className="mx-auto text-4xl text-zinc-600">Welcome, {session!.user?.name!}!</p>
+          <p className="mx-auto text-2xl text-zinc-600 text-center">
+            Spark is in early development, there may be bugs.
+          </p>{' '}
+          <p className="mx-auto text-zinc-600 text-2xl">
+            Why not try{' '}
+            <Link href="/app/chat">
+              <a className="text-purple-400">Chat</a>
+            </Link>
+            ?
+          </p>
+        </div>
       </div>
     </>
   );

@@ -2,7 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-	@font-face {
-		font-family: Inter;
-		src: url(../../public/fonts/Inter.ttf);
-	}
+@font-face {
+  font-family: Inter;
+  src: url(../../public/fonts/Inter.ttf);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2 rounded-full bg-zinc-700 p-2;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-zinc-900;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-zinc-900;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    @apply w-2 rounded-full bg-zinc-700 p-2;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-zinc-900;
+  }
+}
+
+.has-tooltip .tooltip {
+  display: none;
+}
+
+.has-tooltip:hover .tooltip {
+  display: block;
+}
+
+.portal {
+  @apply absolute z-50;
+}

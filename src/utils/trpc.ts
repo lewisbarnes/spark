@@ -49,6 +49,8 @@ export const trpc = createTRPCNext<AppRouter>({
 	ssr: false,
 });
 
-export type ChannelOutput = inferProcedureOutput<AppRouter['channel']>;
+export type RouterOutput = inferProcedureOutput<AppRouter>;
+
+export const withTRPC = trpc.withTRPC;
 // export type MessageOutput = inferProcedureOutput<AppRouter>;
 // export type AccountOutput = inferProcedureOutput<AppRouter['account']>;

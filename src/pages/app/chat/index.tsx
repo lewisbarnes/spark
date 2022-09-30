@@ -4,96 +4,119 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { FaBars } from 'react-icons/fa';
+import { FaBars, FaComment, FaHandMiddleFinger, FaUser, FaWindowClose } from 'react-icons/fa';
 import { ChatBox } from '../../../components/chat/chatBox';
 import Header from '../../../components/header';
 import { trpc } from '../../../utils/trpc';
+import { createPortal } from 'react-dom';
+import Portal from '../../../components/portal';
+import ToolTip from '../../../components/tooltip';
+import UserList from '../../../components/userList';
 
 const ChatHome: NextPage<{ channel: string }> = ({ channel }) => {
   const { data: session, status: authStatus } = useSession();
   const router = useRouter();
   const { data: channels, isLoading: channelsLoading } = trpc.channel.getAll.useQuery();
-  const [channelId, setChannelId] = useState<string | null>(null);
+  const [channelId, setChannelId] = useState(channel);
 
   const [channelsHidden, setChannelsHidden] = useState(false);
 
-  const getChannelListCSS = () => {
-    if (channelsLoading) {
-      return;
-    }
-    const isMobile = navigator.userAgent.toLowerCase().match(/mobile/i);
-    const baseCSS = '';
-    if (isMobile) {
-      return `absolute z-50 flex flex-col ${baseCSS}`;
-    }
-    return `${baseCSS}`;
-  };
+  const [showTooltip, setShowToolTip] = useState(false);
+  const [tooltipText, setToolTipText] = useState('');
 
-  useEffect(() => {
-    if (!navigator) {
-      return;
-    }
-    const isMobile = navigator.userAgent.toLowerCase().match(/mobile/i);
-    if (isMobile) {
-      setChannelsHidden(true);
-    }
-  }, []);
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  const [toolTipPos, setToolTipPos] = useState({ clientY: 0, clientX: 0 });
 
   useEffect(() => {
     if (channel) {
       setChannelId(channel);
-    } else if (channelId) {
-      router.push({ pathname: '/app/chat', query: { c: channelId } });
     }
-  }, [channel]);
-  if (channelsLoading) {
-  }
+  }, [channel, toolTipPos]);
+
   return (
-    <>
+    <div className="flex h-screen flex-col bg-neutral-200 px-3 dark:bg-zinc-800">
       <Head>
         <title>Spark</title>
         <meta name="description" content="A chat app" />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content={`https://ogi.sh?title=Spark%20Chat&unsplashId=rCbdp8VCYhQ`}
+        />
       </Head>
-      <div className="flex flex-col h-screen max-h-screen w-full bg-neutral-200 dark:bg-zinc-800">
+      <div className="-mx-1">
         <Header />
-        <button
-          className="flex gap-3 hover:text-purple-400 items-center hover:cursor-pointer p-3"
-          onClick={() => setChannelsHidden(!channelsHidden)}
-        >
-          <FaBars className="inline" />
-          <span>Channels</span>
-        </button>
+      </div>
 
-        <div className={`flex h-full gap-3 px-3 pb-3`}>
-          {channelsHidden ? (
-            <></>
-          ) : (
-            <div className="flex flex-col gap-1 p-2 -ml-3 min-h-full border-r-[1px] border-neutral-500 dark:border-zinc-600">
-              {channels?.map((channel) => (
+      <div className="flex h-auto w-full flex-grow flex-col bg-neutral-200 dark:bg-zinc-800">
+        <div className={`flex h-full gap-3`}>
+          <div className="scrollbar-thin relative max-h-[93.8vh] space-y-1 overflow-y-auto border-r bg-zinc-800 pr-2 dark:border-zinc-600 md:static md:z-0">
+            <FaComment className="mx-auto mb-3" />
+            {channels?.map((channel) => (
+              <div className="relative">
                 <Link key={channel.id} href={`/app/chat?c=${channel.id}`}>
-                  <div
+                  <a
                     className={[
-                      'text-sm rounded-md p-2 hover:bg-neutral-300 dark:hover:bg-zinc-600 dark:hover:text-purple-400 hover:cursor-pointer',
-                      channelId == channel.id ? ' bg-neutral-300 dark:bg-zinc-600' : '',
+                      'relative block select-none rounded-md border border-transparent p-2 text-sm hover:cursor-pointer dark:hover:border-zinc-600',
+                      channelId == channel.id ? ' bg-neutral-300 dark:bg-purple-400' : '',
                     ].join(' ')}
+                    onMouseEnter={(e) => {
+                      setShowToolTip(true);
+                      setToolTipText(channel.name);
+                      setToolTipPos({
+                        clientY:
+                          e.currentTarget.getBoundingClientRect().y +
+                          e.currentTarget.getBoundingClientRect().height / 4,
+                        clientX: e.currentTarget.getBoundingClientRect().x,
+                      });
+                    }}
+                    onMouseLeave={() => setShowToolTip(false)}
                   >
-                    <i>#{channel.name}</i>
-                  </div>
+                    <i className="[writing-mode:vertical-rl]">#{channel.name}</i>
+                  </a>
                 </Link>
-              ))}
-            </div>
-          )}
-          {channelId ? (
-            <ChatBox channelId={channelId} compact={true} />
-          ) : (
-            <div className="mx-auto my-auto text-4xl w-full text-center text-zinc-600">
-              No channel selected
-            </div>
-          )}
+              </div>
+            ))}
+            {showTooltip && (
+              <ToolTip
+                value={`#${tooltipText}`}
+                pos={{ x: toolTipPos.clientX + 55, y: toolTipPos.clientY }}
+              ></ToolTip>
+            )}
+          </div>
+
+          <div className="flex h-full flex-grow">
+            {channelId ? (
+              <ChatBox channelId={channelId} compact={true} />
+            ) : (
+              <div className="mx-auto my-auto w-full text-center text-4xl text-zinc-600">
+                No channel selected
+              </div>
+            )}
+          </div>
+          <UserList />
         </div>
       </div>
-    </>
+      {showWelcome && (
+        <Portal>
+          <div className="pointer-events-auto absolute z-50 flex h-screen w-screen backdrop-blur-md">
+            <div className="relative my-auto mx-auto h-60 w-96 rounded-md border border-zinc-600 bg-zinc-800 p-4">
+              <p className="text-center text-2xl">Warning!</p>
+              <p className="text-center text-xl">
+                Spark is in early development. There will be bugs. There will be missing features.
+              </p>
+              <button
+                className="mx-auto mt-4 block rounded-md border px-4 py-2 hover:cursor-pointer"
+                onClick={() => setShowWelcome(false)}
+              >
+                I understand
+              </button>
+            </div>
+          </div>
+        </Portal>
+      )}
+    </div>
   );
 };
 

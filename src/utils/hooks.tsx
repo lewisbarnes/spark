@@ -31,7 +31,7 @@ export const useMessageChannel = (channelId: string) => {
       messageChannel.unsubscribe();
       pusher.disconnect();
     };
-  },[messages]);
+  }, [messages]);
 
   return { channel, messages, isLoading };
 };

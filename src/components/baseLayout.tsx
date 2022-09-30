@@ -1,12 +1,11 @@
 import { FC } from 'react';
+import Header from './header';
 
 type Props = {
-	children: JSX.Element;
+  children: React.ReactNode;
 };
 export const BaseLayout: FC<Props> = ({ children }) => {
-	return (
-		<main className='flex flex-col h-screen min-h-screen w-full bg-zinc-800'>
-			{children}
-		</main>
-	);
+  return (
+    <main className="flex h-screen min-h-screen w-full flex-col bg-zinc-800 px-3">{children}</main>
+  );
 };
